@@ -4,122 +4,115 @@
 [![OEEL-1.0 license](https://img.shields.io/badge/license-OEEL--1.0-critical})](LICENSE)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://pre-commit.com/)
 
-**Projeto Odoo com Doodba**
+## **Configurando um Ambiente de Desenvolvimento Odoo com Doodba**
+
+**Objetivo**
+
+Este documento detalha o processo completo para configurar um ambiente de desenvolvimento Odoo utilizando o template `copier` da Tecnativa.
+
+**Doodba**
+É um projeto de código aberto desenvolvido pela empresa espanhola Tecnativa. É uma camada de orquestração que se assenta sobre a infraestrutura do Docker para gerenciar intâncias de Odoo e suas dependências. 
+- Vantagens: oferece uma abordagem estruturada e opinativa para a criação de ambientes Odoo customizados utilizando containers Docker. Fornece uma imagem Docker base e um conjunto de ferramentas e convenções projetadas para simplificar e padronizar o desenvolvimento, teste e implantação de projetos Odoo. 
+
+- Objetivo: agilizar o ciclo de vida do desenvolvimento de Odoo, promovendo as melhores práticas e automatizando tarefas repetitivas.
+
+**Pré-requisitos**
+
+Antes de começar, garanta que os seguintes programas estão instalados em sua máquina (Linux Ubuntu/Debian ou similar):
+
+- **Git**
+    
+- **Python 3** e **pip**
+    
+- **Docker** e **Docker Compose**
+
+### **Fase 1: Configuração do Ambiente Local**
+
+Estes passos preparam sua máquina para poder usar as ferramentas necessárias.
+
+**1.1. Instalar o `pipx`**
+É necessário para evitar conflitos com os pacotes Python do sistema, usaremos o `pipx` para instalar ferramentas de linha de comando.
+
+`sudo apt update && sudo apt install pipx`
+
+ **1.2. Instalar o `copier`**
+Com o `pipx` instalado, use-o para instalar o `copier`.
+
+`pipx install copier`
+
+ **1.3. Configurar o PATH do Terminal**
+Para que seu terminal encontre o `copier` e outros programas instalados via `pipx`, execute o comando abaixo.
+
+`pipx ensurepath`
+
+Reinicie o seu terminal, o comando abaixo deve funcionar sem erros:
+
+`copier --version` 
+
+**1.4 Instalar os módulos**
+
+ `pipx install invoke`
+ `pipx install pre-commit`
+
+### **Fase 2: Acesso ao Repositório da Tecnativa**
 
 
-Este repositório contém um ambiente de desenvolvimento Odoo, configurado utilizando a metodologia Doodba e o template copier da Tecnativa.
+ **2.1. Acesso ao GitHub da Tecnativa
 
-💡 O que é Doodba?
-Doodba é um projeto de código aberto desenvolvido pela Tecnativa que serve como uma camada de orquestração sobre Docker para gerenciar instâncias de Odoo e suas dependências.
+1. Acesse o repositório do copier template no github: 
+``	https://github.com/Tecnativa/doodba-copier-template/tree/main
+    
+### **Fase 3: Criação do Projeto Odoo com `copier`**
 
-Vantagens: Oferece uma abordagem estruturada para criar ambientes Odoo customizados com Docker. Ele simplifica e padroniza o desenvolvimento, teste e implantação de projetos, promovendo as melhores práticas e automatizando tarefas repetitivas.
+**3.1. Obter a URL do Template**
 
-✅ Pré-requisitos
-Antes de começar, garanta que os seguintes programas estão instalados em seu sistema (Linux Ubuntu/Debian ou similar):
+No repositório no GitHub, navegue até a página do repositório do template `copier`. Clique no botão azul **"Clone"** e copie a URL **HTTPS**, que deve terminar em `.git`.
 
-´Git´
+**3.2. Executar o `copier`**
 
-´Python 3´ e ´pip´
+No terminal, navegue até o diretório onde deseja criar seu projeto e execute o comando abaixo, substituindo os valores necessários:
 
-´Docker´ e ´Docker Compose´
+`copier copy https://github.com/Tecnativa/doodba-copier-template.git <nome-do-projeto> --trust`
 
-Siga os passos abaixo para recriar um projeto como este ou para iniciar este ambiente pela primeira vez.
+Responda às perguntas que o `copier` fará para configurar as variáveis do projeto (como `ODOO_VERSION`, `STACK_NAME`, etc.).
+---> Fique atento à compatibilidade da versão do Odoo com o BD.
 
-1. Preparação do Ambiente Local (Apenas na Primeira Vez)
-Estes comandos preparam sua máquina com as ferramentas necessárias para gerenciar o projeto.
 
-1.1. Instalar ´pipx´: pipx isola as ferramentas de linha de comando em seus próprios ambientes, evitando conflitos.
+### **Fase 4: Build e Execução do Ambiente**
 
-Bash
+Com a estrutura do projeto criada, o último passo é construir e iniciar os contêineres Docker.
 
-sudo apt update && sudo apt install pipx
-1.2. Instalar copier e outras ferramentas Usaremos pipx para instalar as ferramentas essenciais.
+**4.1. Entrar na Pasta do Projeto**
 
-Bash
+`cd [NOME_DA_PASTA_DO_PROJETO]`
 
-pipx install copier
-pipx install invoke
-pipx install pre-commit
-1.3. Configurar o PATH do Terminal Este comando garante que seu terminal encontre os programas instalados via pipx.
+**4.2. Iniciar o Ambiente de Desenvolvimento**
 
-Bash
+Use o seguinte comando para construir a imagem:
 
-pipx ensurepath
-Atenção: Feche e reabra seu terminal para que a mudança no PATH tenha efeito.
+`invoke develop img-build git-aggregate resetdb start`
 
-2. Criando um Novo Projeto (Como Este Foi Criado)
-Se você deseja criar um novo projeto Odoo do zero usando este template, siga os passos abaixo.
+- `invoke develop`: Link simbólico entre o `devel.yaml` (docker compose de dev)
 
-2.1. Execute o copier Navegue até o diretório onde deseja criar seu projeto e execute o comando abaixo, substituindo <nome-do-projeto> pelo nome desejado.
+- `img-build`: Build da imagem Docker
+    
+- `git-aggregate`: Baixar os módulos da OCA e outros.
 
-Bash
+ **4.3. Verificar a Execução**
 
-copier copy https://github.com/Tecnativa/doodba-copier-template.git <nome-do-projeto> --trust
-2.2. Responda às Perguntas O copier fará uma série de perguntas para configurar as variáveis do projeto, como a versão do Odoo (ODOO_VERSION), nome do projeto (STACK_NAME), etc. Preencha de acordo com suas necessidades.
+Para confirmar que tudo está no ar, execute `docker ps`. Você deve ver os contêineres com o status "Up". Acesse seu ambiente Odoo no navegador de acordo com a porta especificada no `docker ps`.
 
-3. Iniciando Este Ambiente de Desenvolvimento
-Com a estrutura do projeto pronta, siga os passos para construir e iniciar os contêineres Docker.
+**http://localhost:8069
 
-3.1. Entre na Pasta do Projeto
 
-Bash
+### **Comandos**
 
-cd <nome-da-pasta-do-projeto>
-3.2. Construa a Imagem e Inicie o Ambiente O comando invoke orquestra todas as tarefas necessárias para iniciar o ambiente de desenvolvimento pela primeira vez.
-
-Bash
-
-invoke develop img-build git-aggregate resetdb start
-O que este comando faz:
-
-develop: Utiliza o docker-compose.yml de desenvolvimento (devel.yaml).
-
-img-build: Constrói a imagem Docker customizada para o projeto.
-
-git-aggregate: Baixa todos os módulos de Odoo definidos no arquivo addons.yaml (ex: repositórios da OCA).
-
-resetdb: Cria um banco de dados limpo para a primeira inicialização.
-
-start: Inicia os contêineres.
-
-3.3. Verifique a Execução Para confirmar que os contêineres estão no ar, execute docker ps. Você deverá ver os contêineres do projeto com o status Up.
-
-Acesse seu ambiente Odoo no navegador: http://localhost:8069
-
-日常 Uso e Comandos Úteis
-Uma vez que o ambiente está configurado, você pode usar os seguintes comandos invoke para gerenciá-lo no dia a dia.
-
-Parar o ambiente:
-
-Bash
-
-invoke stop
-Iniciar o ambiente novamente:
-
-Bash
-
-invoke start
-Reiniciar o ambiente:
-
-Bash
-
-invoke restart
-Ver logs de um contêiner:
-
-Bash
-
-invoke logs -c <nome-do-container>
-Atualizar os módulos de terceiros:
-
-Bash
-
-invoke git-aggregate
-Instalar ou atualizar um módulo no Odoo:
-
-Bash
-
-invoke install -m <nome_do_modulo>
-Exemplo: invoke install -m web_responsive
+- `invoke restart´: reinicia os containers
+- `invoke stop: para os containers
+-  `invoke start: inicia os containers
+- `invoke logs -c <NOME_DO_CONTAINER>: mostra os logs do container
+- `invoke git-aggregate`: baixa os repositórios definidos em addons.yaml
+- `invoke install -m <NOME_DO_MODULO>:` instala o módulo que deseja. Ex: server-tools, web. 
 
 
 # doodba1 - a Doodba deployment
