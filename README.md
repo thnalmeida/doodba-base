@@ -5,6 +5,8 @@
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://pre-commit.com/)
 
 **Projeto Odoo com Doodba**
+
+
 Este repositório contém um ambiente de desenvolvimento Odoo, configurado utilizando a metodologia Doodba e o template copier da Tecnativa.
 
 💡 O que é Doodba?
