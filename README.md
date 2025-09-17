@@ -57,7 +57,7 @@ Reinicie o seu terminal, o comando abaixo deve funcionar sem erros:
 ### **Fase 2: Acesso ao Repositório da Tecnativa**
 
 
- **2.1. Acesso ao GitHub da Tecnativa
+ **2.1. Acesso ao GitHub da Tecnativa**
 
 1. Acesse o repositório do copier template no github: 
 ``	https://github.com/Tecnativa/doodba-copier-template/tree/main
