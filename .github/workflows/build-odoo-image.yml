@@ -1,0 +1,50 @@
+# Nome do workflow que aparecerá na aba "Actions" do seu repositório
+name: Construir e Publicar Imagem Odoo no GHCR
+
+# Define o gatilho (trigger) para iniciar o workflow.
+on:
+  push:
+    branches:
+      - "main"
+
+# Define os trabalhos (jobs) a serem executados.
+jobs:
+  build-and-push:
+    # O job será executado em uma máquina virtual Ubuntu fornecida pelo GitHub
+    runs-on: ubuntu-latest
+
+    # Define as permissões para o token de automação do GitHub.
+    permissions:
+      contents: read
+      packages: write
+
+    # Define os passos (steps) que o job executará em sequência
+    steps:
+      # 1. Baixa o código do seu repositório para a máquina virtual
+      - name: Checkout do Repositório
+        uses: actions/checkout@v4
+
+      # 2. Faz o login no GitHub Container Registry (ghcr.io)
+      - name: Login no GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # 3. Gera tags inteligentes para a imagem Docker
+      - name: Extrair metadados (tags) para a Imagem
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+
+      # 4. Constrói a imagem Docker e a envia para o GHCR
+      - name: Construir e Enviar a Imagem Docker
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./odoo/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
