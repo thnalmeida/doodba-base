@@ -46,5 +46,7 @@ jobs:
           context: .
           file: ./odoo/Dockerfile
           push: true
+          build-args: |
+            ODOO_VERSION=14.0
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
