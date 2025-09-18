@@ -43,7 +43,7 @@ jobs:
       - name: Construir e Enviar a Imagem Docker
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./odoo
           file: ./odoo/Dockerfile
           push: true
           build-args: |
